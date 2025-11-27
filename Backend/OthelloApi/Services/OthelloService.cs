@@ -38,23 +38,23 @@ namespace OthelloApi.Services
             var board = new GameBoard();
             
             // Gunakan OthelloGame
-            var engine = new OthelloGame(players, board, 8, GameStatus.NotStart, player1, _directions);
+            var game = new OthelloGame(players, board, 8, GameStatus.NotStart, player1, _directions);
             
             // Setup event handlers dengan logging
-            engine.OnGameEvent += (message) => 
+            game.OnGameEvent += (message) => 
                 _logger.LogInformation("[GameEvent] {Message}", message);
                 
-            engine.OnTurnChanged += (player) => 
+            game.OnTurnChanged += (player) => 
                 _logger.LogInformation("[TurnChanged] Sekarang giliran: {PlayerName} ({Color})", 
                     player.Name, player.Color);
                 
-            engine.OnMoveMade += (player, position) => 
+            game.OnMoveMade += (player, position) => 
                 _logger.LogInformation("[MoveMade] {PlayerName} move di ({Row}, {Col})", 
                     player.Name, position.X, position.Y);
             
-            engine.StartGame();
+            game.StartGame();
             
-            _games[gameId] = engine;
+            _games[gameId] = game;
             
             _logger.LogInformation("Game created: {GameId} - {Player1} vs {Player2}", 
                 gameId, player1.Name, player2.Name);
