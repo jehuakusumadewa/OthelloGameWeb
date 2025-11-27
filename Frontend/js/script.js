@@ -103,7 +103,7 @@ function updateGameInfo(gameState) {
   }
 
   // TAMBAHAN: Check if game is finished and show winner
-  if (gameState.status === 2) {
+  if (gameState.status === 2 || gameState.status === 3) {
     // GameStatus.Finished = 2
     showWinner(gameState);
   } else {
@@ -117,7 +117,7 @@ function showWinner(gameState) {
   const player2Name = player2NameInput.value.trim() || "Player 2";
 
   let message = "";
-  if (gameState.winner === "Draw") {
+  if (gameState.winner === null) {
     message = "It's a Draw! 🤝";
   } else if (gameState.winner === player1Name) {
     message = `🎊 ${player1Name} Wins! 🎊`;
