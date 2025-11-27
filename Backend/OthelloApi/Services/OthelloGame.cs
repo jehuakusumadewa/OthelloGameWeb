@@ -58,7 +58,7 @@ namespace OthelloApi.Services
 
         public void StartGame()
         {
-            Status = GameStatus.Play; // UBAH: Play → Play
+            Status = GameStatus.Play; 
             InitializeBoard();
             InitializeBoardDisks();
             
@@ -69,7 +69,7 @@ namespace OthelloApi.Services
 
         public bool IsGameActive()
         {
-            return Status == GameStatus.Play; // UBAH: Play → Play
+            return Status == GameStatus.Play; 
         }
 
         public bool CurrentPlayerHasValidMoves()
