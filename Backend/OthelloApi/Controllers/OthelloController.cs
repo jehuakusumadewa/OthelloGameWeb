@@ -1,0 +1,73 @@
+// Controllers/OthelloController.cs
+using Microsoft.AspNetCore.Mvc;
+using OthelloApi.DTOs;
+using OthelloApi.Services;
+
+namespace OthelloApi.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class OthelloController : ControllerBase
+    {
+        private readonly IOthelloService _othelloService;
+
+        public OthelloController(IOthelloService othelloService)
+        {
+            _othelloService = othelloService;
+        }
+
+        [HttpPost]
+        public IActionResult CreateGame([FromBody] CreateGameDto gameDto)
+        {
+            try
+            {
+                var gameId = _othelloService.CreateGame(gameDto);
+                return Ok(new { GameId = gameId, Message = "Game created successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+        [HttpGet("{gameId}")]
+        public IActionResult GetGameState(Guid gameId)
+        {
+            try
+            {
+                var gameState = _othelloService.GetGameState(gameId);
+                return Ok(gameState);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Error = "Game not found" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+
+        [HttpPost("{gameId}/move")]
+        public IActionResult MakeMove(Guid gameId, [FromBody] MakeMoveDto move)
+        {
+            try
+            {
+                var gameState = _othelloService.MakeMove(gameId, move);
+                return Ok(gameState);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound(new { Error = "Game not found" });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = ex.Message });
+            }
+        }
+    }
+}

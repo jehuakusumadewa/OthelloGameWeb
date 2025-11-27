@@ -1,0 +1,156 @@
+// Services/OthelloService.cs
+using Microsoft.Extensions.Logging; 
+using OthelloApi.DTOs;
+using OthelloApi.Interfaces;
+using OthelloApi.Models;
+
+namespace OthelloApi.Services
+{
+    public class OthelloService : IOthelloService
+    {
+        private readonly Dictionary<Guid, OthelloGame> _games;
+        private readonly List<Position> _directions;
+        private readonly ILogger<OthelloService> _logger;
+
+        // Constructor dengan ILogger
+        public OthelloService(ILogger<OthelloService> logger)
+        {
+            _games = new Dictionary<Guid, OthelloGame>();
+            _directions = new List<Position>
+            {
+                new Position(-1, -1), new Position(-1, 0), new Position(-1, 1),
+                new Position(0, -1),                      new Position(0, 1),
+                new Position(1, -1),  new Position(1, 0),  new Position(1, 1)
+            };
+            _logger = logger;
+            
+            _logger.LogInformation("OthelloService initialized");
+        }
+
+        public Guid CreateGame(CreateGameDto gameDto)
+        {
+            var gameId = Guid.NewGuid();
+            
+            var player1 = new Player { Name = gameDto.Player1Name, Color = DiskColor.Black };
+            var player2 = new Player { Name = gameDto.Player2Name, Color = DiskColor.White };
+            var players = new List<IPlayer> { player1, player2 };
+            
+            var board = new GameBoard();
+            
+            // Gunakan OthelloGame
+            var engine = new OthelloGame(players, board, 8, GameStatus.NotStart, player1, _directions);
+            
+            // Setup event handlers dengan logging
+            engine.OnGameEvent += (message) => 
+                _logger.LogInformation("[GameEvent] {Message}", message);
+                
+            engine.OnTurnChanged += (player) => 
+                _logger.LogInformation("[TurnChanged] Sekarang giliran: {PlayerName} ({Color})", 
+                    player.Name, player.Color);
+                
+            engine.OnMoveMade += (player, position) => 
+                _logger.LogInformation("[MoveMade] {PlayerName} move di ({Row}, {Col})", 
+                    player.Name, position.X, position.Y);
+            
+            engine.StartGame();
+            
+            _games[gameId] = engine;
+            
+            _logger.LogInformation("Game created: {GameId} - {Player1} vs {Player2}", 
+                gameId, player1.Name, player2.Name);
+                
+            return gameId;
+        }
+
+
+        public GameStateDto GetGameState(Guid gameId)
+        {
+            if (!_games.ContainsKey(gameId))
+                throw new KeyNotFoundException("Game not found");
+
+            var game = _games[gameId];
+            return MapToGameStateDto(gameId, game);
+        }
+
+        public GameStateDto MakeMove(Guid gameId, MakeMoveDto move)
+        {
+            if (!_games.ContainsKey(gameId))
+                throw new KeyNotFoundException("Game not found");
+
+            var game = _games[gameId];
+            
+            if (!game.IsGameActive())
+                throw new InvalidOperationException("Game is not active");
+
+            var position = new Position(move.Row, move.Column);
+            
+            if (!game.IsValidMove(position, game.GetCurrentPlayer()))
+                throw new InvalidOperationException("Invalid move");
+
+            game.MakeMove(position);
+            
+            // FIXED: Check if the new current player has valid moves
+            // If not, switch player again until we find one with valid moves or game ends
+            while (game.Status == GameStatus.Play && !game.HasValidMove(game.GetCurrentPlayer()))
+            {
+                var opponent = game.GetOpponent(game.GetCurrentPlayer());
+                
+                if (!game.HasValidMove(opponent))
+                {
+                    // Both players have no valid moves - game over
+                    game.FinishGame();
+                    break;
+                }
+                else
+                {
+                    // Only current player has no valid moves - skip turn
+                    game.SwitchPlayer();
+                }
+            }
+
+            return MapToGameStateDto(gameId, game);
+        }
+
+        private GameStateDto MapToGameStateDto(Guid gameId, OthelloGame game)
+        {
+            var board = game.GetBoard();
+            var size = game.GetBoardSize();
+            var boardDto = new List<List<CellDto>>();
+            
+            for (int i = 0; i < size; i++)
+            {
+                var row = new List<CellDto>();
+                for (int j = 0; j < size; j++)
+                {
+                    var cell = board.Squares[i, j];
+                    row.Add(new CellDto
+                    {
+                        Row = i,
+                        Column = j,
+                        DiskColor = cell.Disk?.Color
+                    });
+                }
+                boardDto.Add(row);
+            }
+
+            var validMoves = game.GetValidMoves().Select(m => new PositionDto(m.X, m.Y)).ToList();
+            var currentPlayer = game.GetCurrentPlayer();
+            var blackScore = game.GetPlayerScore(game.GetPlayerByColor(DiskColor.Black));
+            var whiteScore = game.GetPlayerScore(game.GetPlayerByColor(DiskColor.White));
+            var winner = game.GetWinner();
+
+            return new GameStateDto
+            {
+                GameId = gameId,
+                CurrentPlayer = currentPlayer.Name,
+                CurrentPlayerColor = currentPlayer.Color,
+                Status = game.GetGameStatus(),
+                Board = boardDto,
+                ValidMoves = validMoves,
+                BlackScore = blackScore,
+                WhiteScore = whiteScore,
+                Winner = winner?.Name ?? string.Empty
+            };
+        }
+    }
+}
