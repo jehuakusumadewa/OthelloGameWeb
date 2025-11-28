@@ -9,19 +9,12 @@ namespace OthelloApi.Services
     public class OthelloService : IOthelloService
     {
         private readonly Dictionary<Guid, OthelloGame> _games;
-        private readonly List<Position> _directions;
         private readonly ILogger<OthelloService> _logger;
 
         // Constructor dengan ILogger
         public OthelloService(ILogger<OthelloService> logger)
         {
             _games = new Dictionary<Guid, OthelloGame>();
-            _directions = new List<Position>
-            {
-                new Position(-1, -1), new Position(-1, 0), new Position(-1, 1),
-                new Position(0, -1),                      new Position(0, 1),
-                new Position(1, -1),  new Position(1, 0),  new Position(1, 1)
-            };
             _logger = logger;
             
             _logger.LogInformation("OthelloService initialized");
@@ -30,13 +23,6 @@ namespace OthelloApi.Services
         public Guid CreateGame(CreateGameDto gameDto, OthelloGame gameOtto)
         {
             var gameId = Guid.NewGuid();
-            
-            var player1 = new Player { Name = gameDto.Player1Name, Color = DiskColor.Black };
-            var player2 = new Player { Name = gameDto.Player2Name, Color = DiskColor.White };
-            var players = new List<IPlayer> { player1, player2 };
-            
-            var board = new GameBoard();
-            
             // Gunakan OthelloGame
             var game = gameOtto;
             
@@ -57,7 +43,7 @@ namespace OthelloApi.Services
             _games[gameId] = game;
             
             _logger.LogInformation("Game created: {GameId} - {Player1} vs {Player2}", 
-                gameId, player1.Name, player2.Name);
+                gameId, game.GetCurrentPlayer().Name, game.GetOpponent(game.GetCurrentPlayer()).Name);
                 
             return gameId;
         }
