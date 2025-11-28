@@ -20,6 +20,7 @@ namespace OthelloApi.Services
 
         public OthelloGame(List<IPlayer> players, IBoard board, int size, GameStatus status, IPlayer currentPlayer, List<Position> directions)
         {
+            
             _board = board;
             _size = size;
             Status = status;
@@ -28,9 +29,9 @@ namespace OthelloApi.Services
             _directions = directions;
             
             // TAMBAHAN: Initialize default actions untuk logging
-            OnTurnChanged = (player) => LogMessage($"🎮 Giliran {player.Name} ({player.Color})");
+            OnTurnChanged = (player) => LogMessage($"Giliran {player.Name} ({player.Color})");
             OnGameEvent = (message) => LogMessage(message);
-            OnMoveMade = (player, position) => LogMessage($"📍 {player.Name} meletakkan disk di ({position.X}, {position.Y})");
+            OnMoveMade = (player, position) => LogMessage($"{player.Name} meletakkan disk di ({position.X}, {position.Y})");
         }
 
         // TAMBAHAN: Method untuk logging
@@ -63,7 +64,7 @@ namespace OthelloApi.Services
             InitializeBoardDisks();
             
             // TAMBAHAN: Trigger game start event
-            OnGameEvent?.Invoke("🎯 Game Othello dimulai!");
+            OnGameEvent?.Invoke("Game Othello dimulai!");
             OnTurnChanged?.Invoke(_currentPlayer);
         }
 
@@ -105,7 +106,7 @@ namespace OthelloApi.Services
 
         public void SkipTurn()
         {
-            OnGameEvent?.Invoke($"⏭️ {_currentPlayer.Name} skip turn");
+            OnGameEvent?.Invoke($"⏭{_currentPlayer.Name} skip turn");
             SwitchPlayer();
             
             if (!HasValidMove(_currentPlayer))
@@ -141,7 +142,7 @@ namespace OthelloApi.Services
             PlaceDisk(new Position(4, 3), new GameDisk { Color = DiskColor.Black });
             PlaceDisk(new Position(4, 4), new GameDisk { Color = DiskColor.White });
             
-            OnGameEvent?.Invoke("⚫⚪ Disk awal ditempatkan");
+            OnGameEvent?.Invoke("Disk awal ditempatkan");
         }
 
         private void PlaceDisk(Position position, IDisk disk)
@@ -322,18 +323,18 @@ namespace OthelloApi.Services
             {
                 Status = GameStatus.Win; 
                 var winner = GetPlayerByColor(DiskColor.Black);
-                OnGameEvent?.Invoke($"🏆 {winner?.Name} menang dengan skor {blackScore}-{whiteScore}!");
+                OnGameEvent?.Invoke($"{winner?.Name} menang dengan skor {blackScore}-{whiteScore}!");
             }
             else if (whiteScore > blackScore)
             {
                 Status = GameStatus.Win; 
                 var winner = GetPlayerByColor(DiskColor.White);
-                OnGameEvent?.Invoke($"🏆 {winner?.Name} menang dengan skor {whiteScore}-{blackScore}!");
+                OnGameEvent?.Invoke($"{winner?.Name} menang dengan skor {whiteScore}-{blackScore}!");
             }
             else
             {
                 Status = GameStatus.Draw;
-                OnGameEvent?.Invoke($"🤝 Seri! Skor {blackScore}-{whiteScore}");
+                OnGameEvent?.Invoke($"Seri! Skor {blackScore}-{whiteScore}");
             }
         }
 

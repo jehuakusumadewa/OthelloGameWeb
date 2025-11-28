@@ -27,7 +27,7 @@ namespace OthelloApi.Services
             _logger.LogInformation("OthelloService initialized");
         }
 
-        public Guid CreateGame(CreateGameDto gameDto)
+        public Guid CreateGame(CreateGameDto gameDto, OthelloGame gameOtto)
         {
             var gameId = Guid.NewGuid();
             
@@ -38,7 +38,7 @@ namespace OthelloApi.Services
             var board = new GameBoard();
             
             // Gunakan OthelloGame
-            var game = new OthelloGame(players, board, 8, GameStatus.NotStart, player1, _directions);
+            var game = gameOtto;
             
             // Setup event handlers dengan logging
             game.OnGameEvent += (message) => 

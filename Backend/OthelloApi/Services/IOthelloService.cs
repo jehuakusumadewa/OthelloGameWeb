@@ -5,7 +5,7 @@ namespace OthelloApi.Services
 {
     public interface IOthelloService
     {
-        Guid CreateGame(CreateGameDto gameDto);
+        Guid CreateGame(CreateGameDto gameDto, OthelloGame gameOtto);
         GameStateDto GetGameState(Guid gameId);
         GameStateDto MakeMove(Guid gameId, MakeMoveDto move);
     }

@@ -17,11 +17,12 @@ namespace OthelloApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateGame([FromBody] CreateGameDto gameDto)
+        public IActionResult CreateGame([FromBody] CreateGameDto gameDto, OthelloGame othelloGame)
         {
             try
             {
-                var gameId = _othelloService.CreateGame(gameDto);
+                var Otto = othelloGame;
+                var gameId = _othelloService.CreateGame(gameDto, Otto);
                 return Ok(new { GameId = gameId, Message = "Game created successfully" });
             }
             catch (Exception ex)
