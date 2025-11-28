@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using OthelloApi.DTOs;
 using OthelloApi.Services;
+using OthelloApi.Models;
 
 namespace OthelloApi.Controllers
 {

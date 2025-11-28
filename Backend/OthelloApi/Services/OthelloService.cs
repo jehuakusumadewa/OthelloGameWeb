@@ -49,29 +49,29 @@ namespace OthelloApi.Services
         }
 
 
-        public GameStateDto GetGameState(Guid gameId)
+        public GameResult<GameStateDto> GetGameState(Guid gameId)
         {
             if (!_games.ContainsKey(gameId))
-                throw new KeyNotFoundException("Game not found");
+                GameResult<GameStateDto>.Failure("Game not found");
 
             var game = _games[gameId];
             return MapToGameStateDto(gameId, game);
         }
 
-        public GameStateDto MakeMove(Guid gameId, MakeMoveDto move)
+        public GameResult<GameStateDto> MakeMove(Guid gameId, MakeMoveDto move)
         {
             if (!_games.ContainsKey(gameId))
-                throw new KeyNotFoundException("Game not found");
+                GameResult<GameStateDto>.Failure("Game not found");
 
             var game = _games[gameId];
             
             if (!game.IsGameActive())
-                throw new InvalidOperationException("Game is not active");
+                GameResult<GameStateDto>.Failure("Game is not active");
 
             var position = new Position(move.Row, move.Column);
             
             if (!game.IsValidMove(position, game.GetCurrentPlayer()))
-                throw new InvalidOperationException("Invalid move");
+                GameResult<GameStateDto>.Failure("Invalid move");
 
             game.MakeMove(position);
             
@@ -97,7 +97,7 @@ namespace OthelloApi.Services
             return MapToGameStateDto(gameId, game);
         }
 
-        private GameStateDto MapToGameStateDto(Guid gameId, OthelloGame game)
+        private GameResult<GameStateDto> MapToGameStateDto(Guid gameId, OthelloGame game)
         {
             var board = game.GetBoard();
             var size = game.GetBoardSize();
@@ -125,18 +125,20 @@ namespace OthelloApi.Services
             var whiteScore = game.GetPlayerScore(game.GetPlayerByColor(DiskColor.White));
             var winner = game.GetWinner();
 
-            return new GameStateDto
-            {
-                GameId = gameId,
-                CurrentPlayer = currentPlayer.Name,
-                CurrentPlayerColor = currentPlayer.Color,
-                Status = game.GetGameStatus(),
-                Board = boardDto,
-                ValidMoves = validMoves,
-                BlackScore = blackScore,
-                WhiteScore = whiteScore,
-                Winner = winner?.Name ?? string.Empty
-            };
+            var gameStateDao =  new GameStateDto
+                                {
+                                    GameId = gameId,
+                                    CurrentPlayer = currentPlayer.Name,
+                                    CurrentPlayerColor = currentPlayer.Color,
+                                    Status = game.GetGameStatus(),
+                                    Board = boardDto,
+                                    ValidMoves = validMoves,
+                                    BlackScore = blackScore,
+                                    WhiteScore = whiteScore,
+                                    Winner = winner?.Name ?? string.Empty
+                                };
+
+            return GameResult<GameStateDto>.Success(gameStateDao);
         }
     }
 }
