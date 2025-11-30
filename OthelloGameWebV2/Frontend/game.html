@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Othello Game</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="player_modal" class="modal">
+      <div class="modal-content">
+        <h2>Create New Othello Game</h2>
+
+        <!-- Minigrid dengan animasi flip -->
+        <div class="minigrid">
+          <div class="square">
+            <div class="disk-container">
+              <div class="disk flipping">
+                <div class="disk-face disk-white"></div>
+                <div class="disk-face disk-black"></div>
+              </div>
+            </div>
+          </div>
+          <div class="square">
+            <div class="disk-container">
+              <div class="disk flipping" style="animation-delay: 1s">
+                <div class="disk-face disk-black"></div>
+                <div class="disk-face disk-white"></div>
+              </div>
+            </div>
+          </div>
+          <div class="square">
+            <div class="disk-container">
+              <div class="disk flipping" style="animation-delay: 2s">
+                <div class="disk-face disk-black"></div>
+                <div class="disk-face disk-white"></div>
+              </div>
+            </div>
+          </div>
+          <div class="square">
+            <div class="disk-container">
+              <div class="disk flipping" style="animation-delay: 3s">
+                <div class="disk-face disk-white"></div>
+                <div class="disk-face disk-black"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="player1_name">Player 1 Name (Black):</label>
+          <input
+            type="text"
+            id="player1_name"
+            placeholder="Enter Player 1 name"
+            value="Player 1"
+          />
+        </div>
+        <div class="input-group">
+          <label for="player2_name">Player 2 Name (White):</label>
+          <input
+            type="text"
+            id="player2_name"
+            placeholder="Enter Player 2 name"
+            value="Player 2"
+          />
+        </div>
+        <button id="create_game_btn" class="btn-primary">
+          Create New Game
+        </button>
+        <button
+          id="back_to_home"
+          class="btn-secondary"
+          style="margin-top: 10px"
+        >
+          ← Back to Home
+        </button>
+      </div>
+    </div>
+    <header>
+      <div id="logo_container">
+        <a href="index.html" id="home_button">
+          <h1>Othello <span>Game</span></h1>
+        </a>
+      </div>
+
+      <nav>
+        <button id="new_game_button">
+          <span>🆕 New Game</span>
+        </button>
+        <button id="restart_button">
+          <span>🔄 Restart</span>
+        </button>
+      </nav>
+    </header>
+
+    <main id="game_main" style="display: none">
+      <div class="score_container black-player" id="black_player_container">
+        <p id="black_score" class="score">2</p>
+        <div class="disc black"></div>
+        <p id="black_player_name" class="player-name">Player 1</p>
+      </div>
+
+      <div class="game-area">
+        <div class="game-info">
+          <p>
+            Current Player:
+            <span id="current_player_display" class="player-display"
+              >Black</span
+            >
+          </p>
+        </div>
+
+        <div id="othello_game_board_border">
+          <div id="othello_game_container">
+            <div id="game_board_layer"></div>
+            <div id="discs_layer"></div>
+            <div id="valid_move_layer"></div>
+          </div>
+        </div>
+
+        <div class="game-status">
+          <p id="game_status_display">Game in progress</p>
+        </div>
+      </div>
+
+      <div class="score_container white-player" id="white_player_container">
+        <p id="white_score" class="score">2</p>
+        <div class="disc white"></div>
+        <p id="white_player_name" class="player-name">Player 2</p>
+      </div>
+
+      <!-- Winner section -->
+      <div id="winnerSection" class="winner-section hidden">
+        <div class="winner-content">
+          <h2>🎉 Game Over! 🎉</h2>
+          <div id="winnerMessage" class="winner-message"></div>
+          <div class="final-scores">
+            <div class="final-score">
+              <span class="score-label">Black Score:</span>
+              <span id="finalBlackScore" class="score-value">0</span>
+            </div>
+            <div class="final-score">
+              <span class="score-label">White Score:</span>
+              <span id="finalWhiteScore" class="score-value">0</span>
+            </div>
+          </div>
+          <button id="newGameBtn" class="new-game-btn">Start New Game</button>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/script.js"></script>
+  </body>
+  <div id="toast" class="toast hidden"></div>
+</html>
