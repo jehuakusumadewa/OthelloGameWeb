@@ -74,7 +74,7 @@ function showToast(message, type = "error") {
 
 async function handleCellClick(row, col) {
   if (!currentGameId) {
-    showToast("❌ Game tidak ditemukan. Buat game baru.", "error");
+    showToast("Game tidak ditemukan. Buat game baru.", "error");
     return;
   }
 
@@ -126,15 +126,15 @@ async function handleCellClick(row, col) {
       gameData = result;
     } else {
       console.error("Unexpected response format:", result);
-      showToast("❌ Format respons tidak dikenali", "error");
+      showToast("Format respons tidak dikenali", "error");
       return;
     }
 
-    showToast("✅ Langkah berhasil!", "success");
+    showToast("Langkah berhasil!", "success");
     renderGameState(gameData);
   } catch (error) {
     console.error("Fatal error making move:", error);
-    showToast("❌ Gagal terhubung ke server. Periksa koneksi.", "error");
+    showToast("Gagal terhubung ke server. Periksa koneksi.", "error");
   } finally {
     showLoading(false);
   }
@@ -149,7 +149,7 @@ function showInvalidMoveFeedback(row, col, errorMessage) {
     : "Pemain";
 
   const errorMappings = {
-    "Invalid move": `❌ ${currentPlayerName}, itu bukan langkah yang valid!`,
+    "Invalid move": `${currentPlayerName}, itu bukan langkah yang valid!`,
     "Not your turn": `${currentPlayerName}, tunggu giliranmu!`,
     "Game not found": "Game tidak ditemukan.",
     "Game is not active": "Game sudah selesai!",
@@ -159,7 +159,7 @@ function showInvalidMoveFeedback(row, col, errorMessage) {
 
   const friendlyMessage =
     errorMappings[errorMessage] ||
-    `❌ ${currentPlayerName}, ${errorMessage.toLowerCase()}`;
+    `${currentPlayerName}, ${errorMessage.toLowerCase()}`;
 
   showToast(friendlyMessage, "warning");
   animateInvalidCell(row, col);
@@ -233,7 +233,7 @@ async function createNewGame(player1Name, player2Name) {
     console.log("Creating new game with:", player1Name, player2Name);
 
     if (!player1Name.trim() || !player2Name.trim()) {
-      showToast("❌ Nama pemain tidak boleh kosong", "error");
+      showToast("Nama pemain tidak boleh kosong", "error");
       return;
     }
 
@@ -277,10 +277,10 @@ async function createNewGame(player1Name, player2Name) {
     hidePlayerModal();
     showGameMain();
     await updateGameState();
-    showToast("🎮 Game berhasil dibuat!", "success");
+    showToast("Game berhasil dibuat!", "success");
   } catch (error) {
     console.error("Error creating game:", error);
-    showToast(`❌ Gagal membuat game: ${error.message}`, "error");
+    showToast(`Gagal membuat game: ${error.message}`, "error");
     const blackName = document.getElementById("black_player_name");
     const whiteName = document.getElementById("white_player_name");
     if (blackName && whiteName) {
@@ -296,7 +296,7 @@ async function createNewGame(player1Name, player2Name) {
 
 async function updateGameState() {
   if (!currentGameId) {
-    showToast("❌ Game tidak aktif. Buat game baru.", "error");
+    showToast("Game tidak aktif. Buat game baru.", "error");
     return;
   }
 
@@ -307,7 +307,7 @@ async function updateGameState() {
     const response = await fetch(`${API_BASE_URL}/Othello/${currentGameId}`);
 
     if (response.status === 404) {
-      showToast("❌ Game tidak ditemukan. Buat game baru.", "error");
+      showToast("Game tidak ditemukan. Buat game baru.", "error");
       currentGameId = null;
       return;
     }
@@ -322,10 +322,10 @@ async function updateGameState() {
   } catch (error) {
     console.error("Error fetching game state:", error);
     if (error.message.includes("404") || error.message.includes("not found")) {
-      showToast("❌ Game tidak ditemukan. Buat game baru.", "error");
+      showToast("Game tidak ditemukan. Buat game baru.", "error");
       currentGameId = null;
     } else {
-      showToast("❌ Gagal memuat game state", "error");
+      showToast("Gagal memuat game state", "error");
     }
   } finally {
     showLoading(false);
