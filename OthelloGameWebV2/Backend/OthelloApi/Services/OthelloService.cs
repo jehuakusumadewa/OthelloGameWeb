@@ -82,7 +82,7 @@ namespace OthelloApi.Services
 
             game.MakeMove(position);
             
-            // FIXED: Check if the new current player has valid moves
+
             while (game.Status == GameStatus.Play && !game.HasValidMove(game.GetCurrentPlayer()))
             {
                 var opponent = game.GetOpponent(game.GetCurrentPlayer());

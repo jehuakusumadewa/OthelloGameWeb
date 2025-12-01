@@ -112,6 +112,8 @@ function init() {
 
   // Mulai animasi
   animate();
+  playMusic();
+  
 }
 
 function createOthelloBoard() {
@@ -484,3 +486,8 @@ function changeBoardColor(color) {
 // Inisialisasi aplikasi
 init();
 createStars();
+
+const music = document.getElementById("myMusic");
+function playMusic() {
+  music.play();
+}

@@ -13,7 +13,7 @@ namespace OthelloApi.Services
         private int _size;
         private readonly List<Position> _directions;
         
-        // TAMBAHAN: Delegate untuk events
+
         public Action<IPlayer> OnTurnChanged { get; set; }
         public Action<string> OnGameEvent { get; set; }
         public Action<IPlayer, Position> OnMoveMade { get; set; }
@@ -28,16 +28,16 @@ namespace OthelloApi.Services
             _players = players;
             _directions = directions;
             
-            // TAMBAHAN: Initialize default actions untuk logging
+      
             OnTurnChanged = (player) => LogMessage($"Giliran {player.Name} ({player.Color})");
             OnGameEvent = (message) => LogMessage(message);
             OnMoveMade = (player, position) => LogMessage($"{player.Name} meletakkan disk di ({position.X}, {position.Y})");
         }
 
-        // TAMBAHAN: Method untuk logging
+   
         private void LogMessage(string message)
         {
-            // Console logging untuk debugging
+       
             Console.WriteLine($"[OthelloGame] {DateTime.Now:HH:mm:ss} - {message}");
         }
 
@@ -63,7 +63,6 @@ namespace OthelloApi.Services
             InitializeBoard();
             InitializeBoardDisks();
             
-            // TAMBAHAN: Trigger game start event
             OnGameEvent?.Invoke("Game Othello dimulai!");
             OnTurnChanged?.Invoke(_currentPlayer);
         }
@@ -121,7 +120,7 @@ namespace OthelloApi.Services
             PlaceDisk(position, newDisk);
             FlipDisks(position, _currentPlayer.Color);
             
-            // TAMBAHAN: Trigger move event
+          
             OnMoveMade?.Invoke(_currentPlayer, position);
             
             SwitchPlayer();
@@ -131,7 +130,7 @@ namespace OthelloApi.Services
         {
             _currentPlayer = (_currentPlayer == _players[0]) ? _players[1] : _players[0];
             
-            // TAMBAHAN: Trigger turn changed event
+           
             OnTurnChanged?.Invoke(_currentPlayer);
         }
 

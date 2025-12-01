@@ -38,7 +38,7 @@ namespace OthelloApi.Controllers
             {
                 var gameState = _othelloService.GetGameState(gameId);
                 
-                // PERBAIKAN: Periksa apakah GameResult adalah success
+                
                 if (!gameState.IsSuccess)
                 {
                     return BadRequest(new { Error = gameState.ErrorMessage });
@@ -63,7 +63,7 @@ namespace OthelloApi.Controllers
             {
                 var gameState = _othelloService.MakeMove(gameId, move);
                 
-                // PERBAIKAN: Periksa apakah GameResult adalah success
+                
                 if (!gameState.IsSuccess)
                 {
                     return BadRequest(new { Error = gameState.ErrorMessage });

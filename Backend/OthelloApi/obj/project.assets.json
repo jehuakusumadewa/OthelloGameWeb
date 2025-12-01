@@ -487,11 +487,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\jehua\\Documents\\OthelloGameWeb\\Backend\\OthelloApi\\OthelloApi.csproj",
+      "projectUniqueName": "C:\\Users\\jehua\\Documents\\game\\OthelloGameWeb\\Backend\\OthelloApi\\OthelloApi.csproj",
       "projectName": "OthelloApi",
-      "projectPath": "C:\\Users\\jehua\\Documents\\OthelloGameWeb\\Backend\\OthelloApi\\OthelloApi.csproj",
+      "projectPath": "C:\\Users\\jehua\\Documents\\game\\OthelloGameWeb\\Backend\\OthelloApi\\OthelloApi.csproj",
       "packagesPath": "C:\\Users\\jehua\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\jehua\\Documents\\OthelloGameWeb\\Backend\\OthelloApi\\obj\\",
+      "outputPath": "C:\\Users\\jehua\\Documents\\game\\OthelloGameWeb\\Backend\\OthelloApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\jehua\\AppData\\Roaming\\NuGet\\NuGet.Config"

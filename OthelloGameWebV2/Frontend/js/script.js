@@ -130,7 +130,7 @@ async function handleCellClick(row, col) {
       return;
     }
 
-    showToast("Langkah berhasil!", "success");
+    // showToast("Langkah berhasil!", "success");
     renderGameState(gameData);
   } catch (error) {
     console.error("Fatal error making move:", error);
