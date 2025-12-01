@@ -65,7 +65,9 @@
             value="Player 2"
           />
         </div>
-        <button id="create_game_btn" class="btn-primary">
+        <audio id="dicsSound" src="audio/place.mp3"></audio>
+        <audio id="clickSound" src="audio/gameplay-song.mp3"></audio>
+        <button onclick="playSound()" id="create_game_btn" class="btn-primary">
           Create New Game
         </button>
         <button
@@ -84,14 +86,27 @@
         </a>
       </div>
 
-      <nav>
-        <button id="new_game_button">
-          <span>🆕 New Game</span>
-        </button>
-        <button id="restart_button">
-          <span>🔄 Restart</span>
-        </button>
-      </nav>
+
+
+<nav>
+  <!-- Tombol Pause dengan dropdown -->
+  <div id="pause_menu" class="pause-menu">
+    <button id="pause_button">
+      <span>Pause</span>
+    </button>
+    <div id="pause_dropdown" class="pause-dropdown hidden">
+      <button id="resume_button" class="dropdown-item">
+        <span>Resume</span>
+      </button>
+      <button id="restart_button" class="dropdown-item">
+        <span>Restart</span>
+      </button>
+      <button id="new_game_button" class="dropdown-item">
+        <span>New Game</span>
+      </button>
+    </div>
+  </div>
+</nav>
     </header>
 
     <main id="game_main" style="display: none">
@@ -148,7 +163,6 @@
           <button id="newGameBtn" class="new-game-btn">Start New Game</button>
         </div>
       </div>
-      
     </main>
 
     <script src="js/script.js"></script>

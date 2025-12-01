@@ -131,6 +131,8 @@ async function handleCellClick(row, col) {
     }
 
     // showToast("Langkah berhasil!", "success");
+    playDics();
+
     renderGameState(gameData);
   } catch (error) {
     console.error("Fatal error making move:", error);
@@ -138,6 +140,9 @@ async function handleCellClick(row, col) {
   } finally {
     showLoading(false);
   }
+}
+function playDics() {
+  document.getElementById("dicsSound").play();
 }
 
 function showInvalidMoveFeedback(row, col, errorMessage) {
@@ -232,6 +237,21 @@ async function createNewGame(player1Name, player2Name) {
     showLoading(true);
     console.log("Creating new game with:", player1Name, player2Name);
 
+    // Aktifkan tombol pause
+    const pauseButton = document.getElementById("pause_button");
+    if (pauseButton) {
+      pauseButton.disabled = false;
+      pauseButton.style.opacity = "1";
+      pauseButton.style.cursor = "pointer";
+      pauseButton.style.background = "linear-gradient(135deg, #ff6b6b, #ff8e8e)";
+    }
+
+    // Tutup dropdown pause jika terbuka
+    const pauseDropdown = document.getElementById("pause_dropdown");
+    if (pauseDropdown) {
+      pauseDropdown.classList.add("hidden");
+    }
+
     if (!player1Name.trim() || !player2Name.trim()) {
       showToast("Nama pemain tidak boleh kosong", "error");
       return;
@@ -271,24 +291,59 @@ async function createNewGame(player1Name, player2Name) {
     currentGameId = result.gameId;
     console.log("Game created with ID:", currentGameId);
 
+    // Update nama pemain di UI
     document.getElementById("black_player_name").textContent = player1Name;
     document.getElementById("white_player_name").textContent = player2Name;
 
+    // Reset status pemain aktif
+    updateActivePlayer(1); // Black mulai duluan
+
     hidePlayerModal();
     showGameMain();
+    hideWinner();
+    
+    // Reset board
+    createBoardGrid();
+    
     await updateGameState();
     showToast("Game berhasil dibuat!", "success");
+
+    // Reset status game
+    const statusElement = document.getElementById("game_status_display");
+    if (statusElement) {
+      statusElement.textContent = "Game in progress";
+    }
+
+    const currentPlayerElement = document.getElementById("current_player_display");
+    if (currentPlayerElement) {
+      currentPlayerElement.textContent = player1Name;
+      currentPlayerElement.className = "player-display black";
+    }
+
   } catch (error) {
     console.error("Error creating game:", error);
     showToast(`Gagal membuat game: ${error.message}`, "error");
+    
+    // Tetap tampilkan game main dengan nama pemain
     const blackName = document.getElementById("black_player_name");
     const whiteName = document.getElementById("white_player_name");
     if (blackName && whiteName) {
       blackName.textContent = player1Name;
       whiteName.textContent = player2Name;
     }
+    
     hidePlayerModal();
     showGameMain();
+    
+    // Tetap aktifkan tombol pause meski gagal
+    const pauseButton = document.getElementById("pause_button");
+    if (pauseButton) {
+      pauseButton.disabled = false;
+      pauseButton.style.opacity = "1";
+      pauseButton.style.cursor = "pointer";
+      pauseButton.style.background = "linear-gradient(135deg, #ff6b6b, #ff8e8e)";
+    }
+    
   } finally {
     showLoading(false);
   }
@@ -590,18 +645,54 @@ function setupEventListeners() {
     }
   });
 
+  // Pause menu functionality
+  const pauseButton = document.getElementById("pause_button");
+  const pauseDropdown = document.getElementById("pause_dropdown");
+  const resumeButton = document.getElementById("resume_button");
   const restartBtn = document.getElementById("restart_button");
+  const newGameBtn = document.getElementById("new_game_button");
+  const quitButton = document.getElementById("quit_button");
+
+  if (pauseButton && pauseDropdown) {
+    // Toggle dropdown saat tombol pause diklik
+    pauseButton.addEventListener("click", function (e) {
+      e.stopPropagation();
+      pauseDropdown.classList.toggle("hidden");
+    });
+
+    // Tutup dropdown saat klik di luar
+    document.addEventListener("click", function (e) {
+      if (!pauseDropdown.contains(e.target) && !pauseButton.contains(e.target)) {
+        pauseDropdown.classList.add("hidden");
+      }
+    });
+
+    // Prevent dropdown from closing when clicking inside
+    pauseDropdown.addEventListener("click", function (e) {
+      e.stopPropagation();
+    });
+  }
+
+  if (resumeButton) {
+    resumeButton.addEventListener("click", function () {
+      pauseDropdown.classList.add("hidden");
+      // Resume game - tidak ada aksi khusus, hanya menutup dropdown
+      showToast("Game resumed", "success");
+    });
+  }
+
   if (restartBtn) {
     restartBtn.addEventListener("click", async function () {
+      pauseDropdown.classList.add("hidden");
       if (confirm("Are you sure you want to restart the current game?")) {
         await restartGame();
       }
     });
   }
 
-  const newGameBtn = document.getElementById("new_game_button");
   if (newGameBtn) {
     newGameBtn.addEventListener("click", function () {
+      pauseDropdown.classList.add("hidden");
       if (
         confirm(
           "Are you sure you want to create a new game? Current game will be lost."
@@ -609,6 +700,20 @@ function setupEventListeners() {
       ) {
         showPlayerModal();
         hideGameMain();
+        hideWinner();
+      }
+    });
+  }
+
+  if (quitButton) {
+    quitButton.addEventListener("click", function () {
+      pauseDropdown.classList.add("hidden");
+      if (
+        confirm(
+          "Are you sure you want to quit to home? Current game progress will be lost."
+        )
+      ) {
+        window.location.href = "index.html";
       }
     });
   }
@@ -692,6 +797,12 @@ function showWinner(gameState) {
     if (winnerName === "Player2") winnerName = player2Name;
     message = `🎊 ${winnerName} Wins! 🎊`;
   }
+  const pauseButton = document.getElementById("pause_button");
+  if (pauseButton) {
+    pauseButton.disabled = true;
+    pauseButton.style.opacity = "0.5";
+    pauseButton.style.cursor = "not-allowed";
+  }
 
   winnerMessage.textContent = message;
   finalBlackScore.textContent = gameState.blackScore || 0;
@@ -757,3 +868,7 @@ setTimeout(() => {
     console.log("Backend connection check...");
   }
 }, 5000);
+
+function playSound() {
+    document.getElementById("clickSound").play();
+}
