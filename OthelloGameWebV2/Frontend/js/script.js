@@ -797,6 +797,7 @@ function showWinner(gameState) {
     if (winnerName === "Player2") winnerName = player2Name;
     message = `🎊 ${winnerName} Wins! 🎊`;
   }
+  winning();
   const pauseButton = document.getElementById("pause_button");
   if (pauseButton) {
     pauseButton.disabled = true;
@@ -871,4 +872,7 @@ setTimeout(() => {
 
 function playSound() {
     document.getElementById("clickSound").play();
+}
+function winning() {
+    document.getElementById("cheer").play();
 }

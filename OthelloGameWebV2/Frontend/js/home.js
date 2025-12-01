@@ -283,6 +283,7 @@ function startFallingAnimation() {
 
   // Buat board baru
   createOthelloBoard();
+  playSound();
 
   // Buat disc setelah board selesai
   setTimeout(() => {
@@ -480,7 +481,9 @@ function changeBoardColor(color) {
   boardColor = color;
   restartAnimation();
 }
-
+function playSound() {
+    document.getElementById("idle-song").play();
+}
 // Inisialisasi aplikasi
 init();
 createStars();
